@@ -8,7 +8,7 @@ fun main() = runBlocking {
 //    stoppableCoroutine()
 }
 
-private suspend fun CoroutineScope.stoppableCoroutine() {
+private suspend fun stoppableCoroutine() = coroutineScope {
     val startTime = System.currentTimeMillis()
     val job = launch(Dispatchers.Default) {
         var nextPrintTime = startTime

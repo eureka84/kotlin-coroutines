@@ -1,33 +1,30 @@
 package com.eureka.coroutines
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlin.system.measureTimeMillis
 
 
 fun main() = runBlocking {
-//    sequential()
-    concurrent()
-}
-
-suspend fun sequential(){
-    val time = measureTimeMillis {
-        val one = doSomethingUsefulOne()
-        val two = doSomethingUsefulTwo()
-        println("The answer is ${one + two}")
-    }
+//    val time = sequential()
+    val time = concurrent()
     println("Completed in $time ms")
 }
 
-suspend fun CoroutineScope.concurrent(){
-    val time = measureTimeMillis {
+suspend fun sequential(): Long = measureTimeMillis {
+    val one = doSomethingUsefulOne()
+    val two = doSomethingUsefulTwo()
+    println("The answer is ${one + two}")
+}
+
+suspend fun concurrent(): Long = coroutineScope {
+    return@coroutineScope measureTimeMillis {
         val one = async { doSomethingUsefulOne() }
         val two = async { doSomethingUsefulTwo() }
         println("The answer is ${one.await() + two.await()}")
     }
-    println("Completed in $time ms")
 }
 
 suspend fun doSomethingUsefulOne(): Int {
