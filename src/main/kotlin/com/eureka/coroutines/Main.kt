@@ -1,25 +1,13 @@
 package com.eureka.coroutines
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
-fun main(args: Array<String>) {
-    testRunFunction()
-}
-
-fun testRunFunction() {
-
-    GlobalScope.launch {
-        println("In start : ${getThreadName()}")
-        Thread.sleep(200)
-        println("In ended : ${getThreadName()}")
+fun main() = runBlocking { // this: CoroutineScope
+    launch { // launch a new coroutine in the scope of runBlocking
+        delay(1000L)
+        println("World!")
     }
-
-    run {
-        println("Out start: ${getThreadName()}")
-        Thread.sleep(300)
-        println("Out ended: ${getThreadName()}")
-    }
+    println("Hello,")
 }
-
-fun getThreadName(): String = Thread.currentThread().name
