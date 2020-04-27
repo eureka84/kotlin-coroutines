@@ -1,32 +1,28 @@
 package com.eureka.coroutines
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlin.concurrent.thread
 
 fun main() {
     threads()
 }
 
 fun threads() {
-    repeat(1_000_000) {
-        val thread = DelayThread()
-        thread.start()
+    val threads: List<Thread> = List(100_000) {
+        thread {
+            Thread.sleep(1000L)
+            print(".")
+        }
     }
+    threads.forEach { t -> t.join() }
 }
 
-class DelayThread : Thread() {
-    override fun run() {
-        sleep(1000L)
-        print(".")
-    }
-}
-
-fun CoroutineScope.coroutines() {
-    repeat(1_000_000) { // launch a lot of coroutines
+fun coroutines() = runBlocking {
+    val jobs: List<Job> = List(100_000) { // launch a lot of coroutines
         launch {
             delay(1000L)
             print(".")
         }
     }
+    jobs.forEach { j -> j.join() }
 }
