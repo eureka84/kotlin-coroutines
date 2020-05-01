@@ -18,7 +18,7 @@ fun main(): Unit = runBlocking {
     }
 }
 
-private fun executorCoroutineDispatcher(name: String) =
+fun executorCoroutineDispatcher(name: String) =
     Executors.newSingleThreadExecutor(namedThreadFactory(name)).asCoroutineDispatcher()
 
-private fun namedThreadFactory(name: String): ThreadFactory = ThreadFactory { r -> Thread(r, name) }
+fun namedThreadFactory(name: String): ThreadFactory = ThreadFactory { r -> Thread(r, name) }
