@@ -4,6 +4,7 @@ import com.eureka.coroutines.log
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
 
@@ -18,11 +19,8 @@ fun main() {
 
             log("From Thread $threadName")
 
-            val requestInfo = RequestInfo(traceId = "Request $reqNum from thread $threadName")
-            val dispatcher = RequestContextDispatcher(
-                applicationExecutorService.asCoroutineDispatcher(),
-                requestInfo
-            )
+            RequestContext.setRequestInfo(RequestInfo(traceId = "Request $reqNum from thread $threadName"))
+            val dispatcher = newDispatcher(applicationExecutorService)
 
             launchCoroutines(dispatcher) // simulo mie chiamate concorrenti con coroutines
         }
@@ -30,6 +28,15 @@ fun main() {
 
     tomcatExecutorService.shutdown()
     applicationExecutorService.shutdown()
+}
+
+private fun newDispatcher(
+    applicationExecutorService: ExecutorService
+): RequestContextDispatcher {
+    return RequestContextDispatcher(
+        applicationExecutorService.asCoroutineDispatcher(),
+        RequestContext.getRequestInfo()!!
+    )
 }
 
 private fun launchCoroutines(context: CoroutineContext) {
