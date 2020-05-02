@@ -43,9 +43,8 @@ class RequestContextAware(
     }
 }
 
-typealias Block = () -> Unit
 object RequestContext {
-    private val threadLocal = InheritableThreadLocal<RequestInfo>()
+    val threadLocal = InheritableThreadLocal<RequestInfo>()
     fun getRequestInfo(): RequestInfo? = threadLocal.get()
     fun setRequestInfo(requestInfo: RequestInfo?) {
         threadLocal.set(requestInfo)
