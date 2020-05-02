@@ -7,13 +7,15 @@ import kotlin.coroutines.ContinuationInterceptor
 import kotlin.coroutines.CoroutineContext
 
 // inspired by https://github.com/Kotlin/kotlinx.coroutines/issues/119
-class RequestContextDispatcher(
+class RequestContextAware(
     private val context: CoroutineDispatcher,
     private val requestInfo: RequestInfo
-) : AbstractCoroutineContextElement(ContinuationInterceptor), ContinuationInterceptor {
+) : ContinuationInterceptor {
+
+    override val key: CoroutineContext.Key<ContinuationInterceptor> = ContinuationInterceptor
 
     override fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T> {
-        val next = context[ContinuationInterceptor]
+        val next: ContinuationInterceptor? = context[ContinuationInterceptor]
 
         val wrappedContinuation = Wrapper(continuation)
 
@@ -24,6 +26,12 @@ class RequestContextDispatcher(
     }
 
     private inner class Wrapper<T>(private val continuation: Continuation<T>) : Continuation<T> {
+        override val context: CoroutineContext get() = continuation.context
+
+        override fun resumeWith(result: Result<T>) = wrap {
+            continuation.resumeWith(result)
+        }
+
         private inline fun wrap(block: () -> Unit) {
             try {
                 RequestContext.setRequestInfo(requestInfo)
@@ -32,14 +40,10 @@ class RequestContextDispatcher(
                 RequestContext.clear()
             }
         }
-
-        override val context: CoroutineContext get() = continuation.context
-        override fun resumeWith(result: Result<T>) = wrap {
-            continuation.resumeWith(result)
-        }
     }
 }
 
+typealias Block = () -> Unit
 object RequestContext {
     private val threadLocal = InheritableThreadLocal<RequestInfo>()
     fun getRequestInfo(): RequestInfo? = threadLocal.get()

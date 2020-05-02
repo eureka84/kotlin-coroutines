@@ -1,5 +1,6 @@
 package com.eureka.coroutines
 
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
@@ -12,7 +13,7 @@ fun main() = runBlocking {
         log("I'm computing a piece of the answer")
         6
     }
-    val b = async {
+    val b = async (CoroutineName("TEST")) {
         log("I'm computing another piece of the answer")
         7
     }
