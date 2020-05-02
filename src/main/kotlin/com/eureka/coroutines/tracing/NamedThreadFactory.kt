@@ -3,7 +3,7 @@ package com.eureka.coroutines.tracing
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicInteger
 
-internal open class NamedThreadFactory(prefix: String) : ThreadFactory {
+class NamedThreadFactory(prefix: String) : ThreadFactory {
     private val group: ThreadGroup
     private val threadNumber = AtomicInteger(1)
     private val namePrefix: String
@@ -17,11 +17,7 @@ internal open class NamedThreadFactory(prefix: String) : ThreadFactory {
     }
 
     override fun newThread(r: Runnable): Thread {
-        val t = Thread(
-            group, r,
-            namePrefix + threadNumber.getAndIncrement(),
-            0
-        )
+        val t = Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0)
         if (t.isDaemon) t.isDaemon = false
         if (t.priority != Thread.NORM_PRIORITY) t.priority = Thread.NORM_PRIORITY
         return t

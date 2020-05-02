@@ -20,6 +20,6 @@ fun main() = runBlocking {
     log("The answer is ${a.await() * b.await()}")
 }
 
-fun log(message: String) {
+private fun log(message: String) {
     logger.info(message)
 }

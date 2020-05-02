@@ -1,6 +1,8 @@
 package com.eureka.coroutines
 
 import kotlinx.coroutines.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import kotlin.coroutines.CoroutineContext
@@ -19,7 +21,13 @@ fun main(): Unit = runBlocking {
     }
 }
 
-fun executorCoroutineDispatcher(name: String) =
+private fun executorCoroutineDispatcher(name: String) =
     Executors.newSingleThreadExecutor(namedThreadFactory(name)).asCoroutineDispatcher()
 
-fun namedThreadFactory(name: String): ThreadFactory = ThreadFactory { r -> Thread(r, name) }
+private fun namedThreadFactory(name: String): ThreadFactory = ThreadFactory { r -> Thread(r, name) }
+
+private fun log(message: String) {
+    logger.info(message)
+}
+
+private val logger: Logger = LoggerFactory.getLogger("JumpingBetweenContext")

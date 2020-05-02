@@ -1,13 +1,11 @@
 package com.eureka.coroutines.tracing
 
-import com.eureka.coroutines.log
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
-import kotlin.coroutines.CoroutineContext
 
 
 fun main() {
@@ -33,22 +31,24 @@ private fun tomcat(
 
         RequestContext.setRequestInfo(RequestInfo(traceId = "Request $reqNum from thread $threadName"))
 
-        application(newDispatcher(applicationExecutorService))
+        application(applicationExecutorService)
     }
 }
 
-private fun application(context: CoroutineContext) = runBlocking(context) {
-    launch { log("From 1st coroutine, requestInfo: ${RequestContext.getRequestInfo()}") }
-    launch { log("From 2nd coroutine, requestInfo: ${RequestContext.getRequestInfo()}") }
-    launch { log("From 3rd coroutine, requestInfo: ${RequestContext.getRequestInfo()}") }
+private fun application(executorService: ExecutorService): Job {
+    val appFwCoroutineContext = executorService.asCoroutineDispatcher() +
+            RequestContext.threadLocal.asContextElement(RequestContext.getRequestInfo())
+
+    return runBlocking(appFwCoroutineContext) {
+        launch { log("From 1st coroutine, requestInfo: ${RequestContext.getRequestInfo()}") }
+        launch { log("From 2nd coroutine, requestInfo: ${RequestContext.getRequestInfo()}") }
+        launch { log("From 3rd coroutine, requestInfo: ${RequestContext.getRequestInfo()}") }
+    }
 }
 
-private fun newDispatcher(
-    applicationExecutorService: ExecutorService
-): RequestContextAware {
-    return RequestContextAware(
-        applicationExecutorService.asCoroutineDispatcher(),
-        RequestContext.getRequestInfo()!!
-    )
+private fun log(message: String) {
+    logger.info(message)
 }
+
+private val logger: Logger = LoggerFactory.getLogger("PseudoTracing")
 
