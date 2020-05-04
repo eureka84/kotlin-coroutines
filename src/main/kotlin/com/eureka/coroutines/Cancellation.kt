@@ -23,9 +23,9 @@ private suspend fun stoppableCoroutine() = coroutineScope {
         }
     }
     delay(1300L) // delay a bit
-    println("main: I'm tired of waiting!")
+    println("com.eureka.coroutines.flow.main: I'm tired of waiting!")
     job.cancelAndJoin() // cancels the job and waits for its completion
-    println("main: Now I can quit.")
+    println("com.eureka.coroutines.flow.main: Now I can quit.")
 }
 
 private suspend fun CoroutineScope.unstoppableCoroutine() {
@@ -42,7 +42,7 @@ private suspend fun CoroutineScope.unstoppableCoroutine() {
         }
     }
     delay(1300L) // delay a bit
-    println("main: I'm tired of waiting!")
+    println("com.eureka.coroutines.flow.main: I'm tired of waiting!")
     job.cancelAndJoin() // cancels the job and waits for its completion
-    println("main: Now I can quit.")
+    println("com.eureka.coroutines.flow.main: Now I can quit.")
 }

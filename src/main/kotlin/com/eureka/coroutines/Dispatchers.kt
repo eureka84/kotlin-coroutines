@@ -13,10 +13,10 @@ fun main(): Unit = runBlocking<Unit> {
         println("From mine context     : I'm working in thread ${Thread.currentThread().name}")
     }
 
-    launch { // context of the parent, main runBlocking coroutine
-        println("main runBlocking      : I'm working in thread ${Thread.currentThread().name}")
+    launch { // context of the parent, com.eureka.coroutines.flow.main runBlocking coroutine
+        println("com.eureka.coroutines.flow.main runBlocking      : I'm working in thread ${Thread.currentThread().name}")
     }
-    launch(Dispatchers.Unconfined) { // not confined -- will work with main thread
+    launch(Dispatchers.Unconfined) { // not confined -- will work with com.eureka.coroutines.flow.main thread
         println("Unconfined            : I'm working in thread ${Thread.currentThread().name}")
     }
     launch(Dispatchers.Default) { // will get dispatched to DefaultDispatcher

@@ -1,4 +1,4 @@
-package com.eureka.coroutines.tracing
+package com.eureka.coroutines.threadLocal
 
 object RequestContext {
     val threadLocal = InheritableThreadLocal<RequestInfo>()
